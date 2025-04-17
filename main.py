@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 from maps import *
 import math
 from settings import *
@@ -744,16 +745,18 @@ class Game:
     def __init__(self):
         pygame.init()
         pygame.mixer.init()
-        pygame.display.set_caption("Python Dungeon Escape")
+        pygame.display.set_caption("Crypt of Chaos")
         pygame.mixer.music.load('sfx/music.wav')
         pygame.mixer.music.set_volume(1)
-        pygame.mixer.music.play(-1)
+        self.music_started = False
         self.win = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
         self.clock = pygame.time.Clock()
         self.map = DungeonMap(self)
         self.camera = Camera(self)
         self.player = Player(self, self.map)
         self.weapon = Weapon(self, self.player)
+        self.shot_sound = pygame.mixer.Sound('sfx/shot.wav')
+        self.shot_sound.set_volume(0.5)
         self.bullets = pygame.sprite.Group()
         self.keys = []
         self.collidables = pygame.sprite.Group()
@@ -794,7 +797,7 @@ class Game:
             bullet.draw()
 
         pygame.display.update()
-    def main(self):
+    async def main(self):
         running = True
         while running:
             self.clock.tick(FPS)
@@ -803,16 +806,16 @@ class Game:
                     running = False
                     for bullet in self.bullets:
                         print(bullet, bullet.rect.x, bullet.rect.y)
+                if not self.music_started and event.type in (pygame.MOUSEBUTTONDOWN, pygame.KEYDOWN):
+                    pygame.mixer.music.play(-1)
+                    self.music_started = True
             self.keys = pygame.key.get_pressed()
             mouse_buttons = pygame.mouse.get_pressed()
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
-            shot_sound = pygame.mixer.Sound('sfx/shot.wav')
-            shot_sound.set_volume(.5)
-
             if mouse_buttons[0] and self.player.alive and self.weapon.shotCount == 0 and self.weapon.cooldown == 0:
                 self.weapon.is_shooting = True
-                shot_sound.play()
+                self.shot_sound.play()
                 dx = mouse_x - (self.weapon.rect.center[0] - self.camera.offset.x)
                 dy = mouse_y - (self.weapon.rect.center[1] - self.camera.offset.y)
                 angle = math.degrees(math.atan2(dy, dx))
@@ -823,8 +826,9 @@ class Game:
                 self.weapon.is_shooting = False
 
             self.redrawGameWindow()
+            await asyncio.sleep(0)
 
         pygame.quit()
 
 if __name__ == "__main__":
-    Game().main()
+    asyncio.run(Game().main())
