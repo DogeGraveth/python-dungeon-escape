@@ -18,4 +18,4 @@ This game was made using Python's Pygame library. The game features:
     ![maps](images/screenshot4.png)
 - A gun that shoots whenever the user right clicks triggering a cooldown and a recoil to the player. The gun rotates every frame to face the mouse.
 
-This game was loads of fun to make and came with a swarm of challenges which I had to overcome. By the end of it, it totaled to over 800+ lines of code in just my main.py file! I feel as though I really pushed the limits of a simple game engine like pygame with this project, to the point my old chestnut began struggling to run it.
+This game was loads of fun to make and came with a swarm of challenges which I had to overcome. By the end of it, it totaled to over 800+ lines of code in just my main.py file! I feel as though I really pushed the limits of a simple game engine like pygame with this project, to the point my computer began struggling to run it.
